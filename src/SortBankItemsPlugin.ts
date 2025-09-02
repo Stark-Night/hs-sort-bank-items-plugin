@@ -1,66 +1,54 @@
-import {Plugin, SettingsTypes} from "@highlite/core";
-import { PanelManager } from "@highlite/core";
-import ExampleHTML from "../resources/html/html.html";
-import ExampleCSS from "../resources/css/base.css";
-import ExampleImage from "../resources/images/icon.png";
-import ExampleSound from "../resources/sounds/sample.mp3";
+import { Plugin } from '@highlite/core';
+import { PanelManager } from '@highlite/core';
+import PanelHTML from '../resources/html/panel.html';
+import PanelCSS from '../resources/css/panel.css';
 
 export default class SortBankItemsPlugin extends Plugin {
-    panelManager: PanelManager = new PanelManager();
     pluginName = "SortBankItems";
     author: string = "Geeno";
+    panelManager: PanelManager = new PanelManager();
 
     constructor() {
         super()
-        this.settings.ExampleSettings = {
-            text: "Example Setting",
-            type: SettingsTypes.checkbox,
-            value: false,
-            callback: () => this.exampleSettingCallback()
-        }
     };
 
-    private exampleSettingCallback() {
-        this.warn("Setting Changed!");
-    }
-
     init(): void {
+        this.log('init');
     }
 
     start(): void {
-        this.log("ExamplePlugin started");
+        this.log('start');
 
-        // Create Panel
-        let panelItems : HTMLElement[] = this.panelManager.requestMenuItem('⚡️', 'Example Plugin')
+        const panelItems: HTMLElement[] =
+            this.panelManager.requestMenuItem('🔄', 'Sort Bank Items');
 
-        // Example HTML Inclusion
-        panelItems[1].innerHTML = ExampleHTML;
+        const panelBlock: HTMLDivElement = panelItems[1];
+        panelBlock.innerHTML = PanelHTML;
 
-        // Create Scoped CSS
-        let styleTag : HTMLStyleElement = document.createElement("style");
-        styleTag.innerText = `${ExampleCSS}`;
-        panelItems[1].appendChild(styleTag);
+        const styleElement: HTMLStyleElement = document.createElement('style');
+        styleElement.innerText = `${PanelCSS}`;
+        panelBlock.appendChild(styleElement);
 
-        // Example Image Inclusion
-        let imgTag : HTMLImageElement = panelItems[1].getElementsByTagName("img")[0];
-        imgTag.src = ExampleImage;
+        const sortIdButton: HTMLButtonElement =
+            panelBlock.querySelector('#sort_bank_items_plugin_button_id');
+        const sortValueButton: HTMLButtonElement =
+            panelBlock.querySelector('#sort_bank_items_plugin_button_value');
 
-        let buttonTag : HTMLButtonElement = panelItems[1].getElementsByTagName("button")[0];
-        buttonTag.onclick = () => {
-            // Play Audio
-            let audioTag : HTMLAudioElement = document.createElement("audio");
-            panelItems[1].appendChild(audioTag);
-            audioTag.src = ExampleSound;
-            audioTag.play().then(() => {
-                audioTag.addEventListener("ended", () => {
-                    audioTag.remove();
-                })
-            })
-        }
+        sortIdButton.addEventListener('click', (_e) => { this.sortById(_e); });
+        sortValueButton.addEventListener('click', (_e) => { this.sortByValue(_e); });
     }
 
     stop(): void {
-        this.log("ExamplePlugin stopped");
-        this.panelManager.removeMenuItem('⚡️');
+        this.log('stop');
+
+        this.panelManager.removeMenuItem('🔄');
+    }
+
+    private sortById(_event: Event): void {
+        this.log('sort by id');
+    }
+
+    private sortByValue(_event: Event): void {
+        this.log('sort by value');
     }
 }
