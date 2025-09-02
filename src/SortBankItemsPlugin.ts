@@ -13,6 +13,7 @@ const BANK_INSERT_MODE: number = 1;
 export default class SortBankItemsPlugin extends Plugin {
     pluginName = "SortBankItems";
     author: string = "Geeno";
+    version: string = '1.0.0';
 
     private panelManager: PanelManager = new PanelManager();
     private soundManager: SoundManager = new SoundManager();
@@ -64,6 +65,10 @@ export default class SortBankItemsPlugin extends Plugin {
         const styleElement: HTMLStyleElement = document.createElement('style');
         styleElement.innerText = `${PanelCSS}`;
         panelBlock.appendChild(styleElement);
+
+        const versionSpan: HTMLSpanElement =
+            panelBlock.querySelector('#sort_bank_items_plugin_version');
+        versionSpan.innerText = this.version;
 
         const sortIdButton: HTMLButtonElement =
             panelBlock.querySelector('#sort_bank_items_plugin_button_id');
