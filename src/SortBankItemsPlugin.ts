@@ -155,7 +155,6 @@ export default class SortBankItemsPlugin extends Plugin {
         } else {
             const newIndex: Number = parseInt(mapping[itemID]);
             if (itemIndex !== newIndex) {
-                this.log(`swapping ${itemIndex} with ${newIndex} (item ID ${itemID})`);
                 playerBank.reorganizeItems(itemIndex, newIndex, BANK_SWAP_MODE, true);
             } else {
                 taskCooldown = 10;
@@ -168,12 +167,10 @@ export default class SortBankItemsPlugin extends Plugin {
     }
 
     BankUIManager_showBankMenu(): void {
-        this.log('bank opens');
         this.bankOpen = true;
     }
 
     BankUIManager_handleCenterMenuWillBeRemoved(): void {
-        this.log('bank closes');
         this.bankOpen = false;
     }
 }
