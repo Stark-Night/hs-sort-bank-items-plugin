@@ -7,6 +7,7 @@ export default class SortBankItemsPlugin extends Plugin {
     pluginName = "SortBankItems";
     author: string = "Geeno";
     panelManager: PanelManager = new PanelManager();
+    bankOpen: bool = false;
 
     constructor() {
         super()
@@ -46,9 +47,27 @@ export default class SortBankItemsPlugin extends Plugin {
 
     private sortById(_event: Event): void {
         this.log('sort by id');
+        if (!this.settings.enable.value || !this.bankOpen) {
+            this.warn('bank is closed');
+            return;
+        }
     }
 
     private sortByValue(_event: Event): void {
         this.log('sort by value');
+        if (!this.settings.enable.value || !this.bankOpen) {
+            this.warn('bank is closed');
+            return;
+        }
+    }
+
+    BankUIManager_showBankMenu(): void {
+        this.log('bank opens');
+        this.bankOpen = true;
+    }
+
+    BankUIManager_handleCenterMenuWillBeRemoved(): void {
+        this.log('bank closes');
+        this.bankOpen = false;
     }
 }
