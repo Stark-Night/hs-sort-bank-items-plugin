@@ -1,6 +1,7 @@
 import { Plugin } from '@highlite/core';
 import { PanelManager } from '@highlite/core';
 import { SoundManager } from '@highlite/core';
+import { NotificationManager } from '@highlite/core';
 import { SettingsTypes } from '@highlite/core';
 import PanelHTML from '../resources/html/panel.html';
 import PanelCSS from '../resources/css/panel.css';
@@ -15,22 +16,30 @@ export default class SortBankItemsPlugin extends Plugin {
 
     private panelManager: PanelManager = new PanelManager();
     private soundManager: SoundManager = new SoundManager();
+    private notifyManager: NotificationManager = new NotificationManager();
 
     private bankOpen: bool = false;
     private sortTask: number = null;
 
     constructor() {
-        super()
+        super();
+
+        this.settings.notifymessage = {
+            text: 'Notifications',
+            type: SettingsTypes.checkbox,
+            value: false,
+            callback: () => { return; },
+        };
 
         this.settings.notifysound = {
-            text: 'Notify completion with a sound',
+            text: 'Sounds',
             type: SettingsTypes.checkbox,
             value: false,
             callback: () => { return; },
         };
 
         this.settings.soundvolume = {
-            text: 'Sound notification volume',
+            text: 'Sound volume',
             type: SettingsTypes.range,
             value: 100,
             min: 0,
@@ -164,6 +173,11 @@ export default class SortBankItemsPlugin extends Plugin {
         if (index >= mappingKeys.length) {
             this.log('no more items');
             this.sortTask = null;
+
+            if (this.settings.notifymessage.value) {
+                const message = 'Bank items sorting complete!';
+                this.notifyManager.createNotification(message);
+            }
 
             if (this.settings.notifysound.value) {
                 const volume =
