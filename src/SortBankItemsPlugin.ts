@@ -56,14 +56,7 @@ export default class SortBankItemsPlugin extends Plugin {
             return;
         }
 
-        const playerBank: Object =
-            document.highlite.gameHooks
-                .EntityManager
-                .Instance
-                .MainPlayer
-                .BankStorageItems;
-        const bankedItems: Array = playerBank.cloneItems();
-
+        const bankedItems: Array = this.cloneBankItems();
         bankedItems.sort((a, b) => {
             const idA: Number = (a) ? a.Def.ID : bankedItems.length + 1000;
             const idB: Number = (b) ? b.Def.ID : bankedItems.length + 1000;
@@ -71,15 +64,7 @@ export default class SortBankItemsPlugin extends Plugin {
             return idA - idB;
         });
 
-        const sortMapping: Object = {};
-        for (let index in bankedItems) {
-            if (!bankedItems[index]) {
-                continue;
-            }
-
-            const itemID: Number = bankedItems[index].Def.ID;
-            sortMapping[itemID] = index;
-        }
+        const sortMapping: Object = this.generateMapping(bankedItems);
 
         if (null !== this.sortTask) {
             clearTimeout(this.sortTask);
@@ -95,6 +80,48 @@ export default class SortBankItemsPlugin extends Plugin {
             this.warn('bank is closed');
             return;
         }
+
+        const bankedItems: Array = this.cloneBankItems();
+        bankedItems.sort((a, b) => {
+            const costA: Number = (a) ? a.Def.Cost : 9009009;
+            const costB: Number = (b) ? b.Def.Cost : 9009009;
+
+            return costA - costB;
+        });
+
+        const sortMapping: Object = this.generateMapping(bankedItems);
+
+        if (null !== this.sortTask) {
+            clearTimeout(this.sortTask);
+            this.sortTask = null;
+        }
+
+        this.actUponTheBank(0, sortMapping);
+    }
+
+    private cloneBankItems(): Array {
+        const playerBank: Object =
+            document.highlite.gameHooks
+                .EntityManager
+                .Instance
+                .MainPlayer
+                .BankStorageItems;
+
+        return playerBank.cloneItems();
+    }
+
+    private generateMapping(sortedItems: Array): Object {
+        const mapping: Object = {};
+        for (let index in sortedItems) {
+            if (!sortedItems[index]) {
+                continue;
+            }
+
+            const itemID: Number = sortedItems[index].Def.ID;
+            mapping[itemID] = index;
+        }
+
+        return mapping;
     }
 
     private actUponTheBank(index: Number, mapping: Object): void {
