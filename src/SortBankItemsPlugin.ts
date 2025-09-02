@@ -3,15 +3,16 @@ import { PanelManager } from '@highlite/core';
 import PanelHTML from '../resources/html/panel.html';
 import PanelCSS from '../resources/css/panel.css';
 
-const BANK_SWAP_MODE: Number = 0;
-const BANK_INSERT_MODE: Number = 1;
+const BANK_SWAP_MODE: number = 0;
+const BANK_INSERT_MODE: number = 1;
 
 export default class SortBankItemsPlugin extends Plugin {
     pluginName = "SortBankItems";
     author: string = "Geeno";
-    panelManager: PanelManager = new PanelManager();
-    bankOpen: bool = false;
-    sortTask: Number = null;
+
+    private panelManager: PanelManager = new PanelManager();
+    private bankOpen: bool = false;
+    private sortTask: number = null;
 
     constructor() {
         super()
@@ -58,8 +59,8 @@ export default class SortBankItemsPlugin extends Plugin {
 
         const bankedItems: Array = this.cloneBankItems();
         bankedItems.sort((a, b) => {
-            const idA: Number = (a) ? a.Def.ID : bankedItems.length + 1000;
-            const idB: Number = (b) ? b.Def.ID : bankedItems.length + 1000;
+            const idA: number = (a) ? a.Def.ID : bankedItems.length + 1000;
+            const idB: number = (b) ? b.Def.ID : bankedItems.length + 1000;
 
             return idA - idB;
         });
@@ -83,8 +84,8 @@ export default class SortBankItemsPlugin extends Plugin {
 
         const bankedItems: Array = this.cloneBankItems();
         bankedItems.sort((a, b) => {
-            const costA: Number = (a) ? a.Def.Cost : 9009009;
-            const costB: Number = (b) ? b.Def.Cost : 9009009;
+            const costA: number = (a) ? a.Def.Cost : 9009009;
+            const costB: number = (b) ? b.Def.Cost : 9009009;
 
             return costA - costB;
         });
@@ -117,14 +118,14 @@ export default class SortBankItemsPlugin extends Plugin {
                 continue;
             }
 
-            const itemID: Number = sortedItems[index].Def.ID;
+            const itemID: number = sortedItems[index].Def.ID;
             mapping[itemID] = index;
         }
 
         return mapping;
     }
 
-    private actUponTheBank(index: Number, mapping: Object): void {
+    private actUponTheBank(index: number, mapping: Object): void {
         if (!this.settings.enable.value || !this.bankOpen) {
             this.warn('bank is closed');
             this.sortTask = null;
@@ -145,15 +146,15 @@ export default class SortBankItemsPlugin extends Plugin {
             return;
         }
 
-        const itemID: Number = parseInt(mappingKeys[index]);
-        const itemIndex: Number =
+        const itemID: number = parseInt(mappingKeys[index]);
+        const itemIndex: number =
             playerBank.Items.findIndex((e) => (e && e.Def.ID === itemID));
 
-        let taskCooldown: Number = 476 + Math.round(Math.random() * 300);
+        let taskCooldown: number = 476 + Math.round(Math.random() * 300);
         if (-1 === itemIndex) {
             taskCooldown = 10;
         } else {
-            const newIndex: Number = parseInt(mapping[itemID]);
+            const newIndex: number = parseInt(mapping[itemID]);
             if (itemIndex !== newIndex) {
                 playerBank.reorganizeItems(itemIndex, newIndex, BANK_SWAP_MODE, true);
             } else {
@@ -161,7 +162,7 @@ export default class SortBankItemsPlugin extends Plugin {
             }
         }
 
-        this.sortTask = setTimeout((index: Number, mapping: Object) => {
+        this.sortTask = setTimeout((index: number, mapping: Object) => {
             this.actUponTheBank(index, mapping);
         }, taskCooldown, index + 1, mapping);
     }
