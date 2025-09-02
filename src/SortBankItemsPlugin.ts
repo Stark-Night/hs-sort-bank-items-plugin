@@ -5,10 +5,10 @@ import ExampleCSS from "../resources/css/base.css";
 import ExampleImage from "../resources/images/icon.png";
 import ExampleSound from "../resources/sounds/sample.mp3";
 
-export default class ExamplePlugin extends Plugin {
+export default class SortBankItemsPlugin extends Plugin {
     panelManager: PanelManager = new PanelManager();
-    pluginName = "ExamplePlugin";
-    author: string = "Your Name";
+    pluginName = "SortBankItems";
+    author: string = "Geeno";
 
     constructor() {
         super()
