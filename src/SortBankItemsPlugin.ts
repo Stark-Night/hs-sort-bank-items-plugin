@@ -89,6 +89,9 @@ export default class SortBankItemsPlugin extends Plugin {
 
         const bankedItems: Array = this.cloneBankItems();
         bankedItems.sort((a, b) => {
+            // The array is always filled, empty spaces are "null".
+            // In order to push the null at the end it needs an
+            // "infinity" value.
             const idA: number = (a) ? a.Def.ID : bankedItems.length + 1000;
             const idB: number = (b) ? b.Def.ID : bankedItems.length + 1000;
 
@@ -114,6 +117,8 @@ export default class SortBankItemsPlugin extends Plugin {
 
         const bankedItems: Array = this.cloneBankItems();
         bankedItems.sort((a, b) => {
+            // The "inifinity" number is arbitrary, but I didn't want
+            // to use the special keywords.
             const costA: number = (a) ? a.Def.Cost : 9009009;
             const costB: number = (b) ? b.Def.Cost : 9009009;
 
@@ -199,12 +204,21 @@ export default class SortBankItemsPlugin extends Plugin {
         } else {
             const newIndex: number = parseInt(mapping[itemID]);
             if (itemIndex !== newIndex) {
+                // Swap the two items at the given indices.  The last
+                // argument indicates whether the player is
+                // initialized, which is true for user-initiated
+                // tasks.
                 playerBank.reorganizeItems(itemIndex, newIndex, BANK_SWAP_MODE, true);
             } else {
                 taskCooldown = 10;
             }
         }
 
+        // The sorting *must* be carried through a timeout to ensure
+        // the game does not break.  In the best case, sorting
+        // everything in one go results in a log out, in the worst
+        // case data *might* end up corrupted and I'd rather not
+        // see it happen.
         this.sortTask = setTimeout((index: number, mapping: Object) => {
             this.actUponTheBank(index, mapping);
         }, taskCooldown, index + 1, mapping);
@@ -215,6 +229,8 @@ export default class SortBankItemsPlugin extends Plugin {
     }
 
     BankUIManager_handleCenterMenuWillBeRemoved(): void {
+        // This hook is executed both when the window is closed
+        // through the top corner X and when the player walks away.
         this.bankOpen = false;
     }
 }
